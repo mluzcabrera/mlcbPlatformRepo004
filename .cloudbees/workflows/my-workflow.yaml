@@ -33,6 +33,16 @@ jobs:
           export CONTAINER_PORT=$(kubectl get pod --namespace default $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
           echo "Visit http://127.0.0.1:8080 to use your application"
           kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
+          cat >> ./what-the-helm/templates/configmap.yaml << EOF
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: nginx-configmap
+            data:
+              index.html: |
+                <h1>What the Helm!!!</h1>
+          EOF
+          
       - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
         if: ${{ env.deploy != 'true'}}
         name: Google Cloud authentication and undeployment
