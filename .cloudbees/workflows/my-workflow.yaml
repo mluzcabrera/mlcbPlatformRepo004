@@ -24,26 +24,5 @@ jobs:
           gcloud config set project mlcbplatformproject
           gcloud container clusters get-credentials mlcb-platform-cluster-ap002 --region us-east1 --project mlcbplatformproject 
           helm create what-the-helm
-          helm install what-the helm what-the-helm/
-          kubectl expose deployment what-the helm --type LoadBalancer --port 80 --target-port 8080
-          kubectl get pods
-          kubectl get service deployment-mlcb      
-      - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
-        if: ${{ env.deploy == 'true'}}
-        name: Google Cloud authentication and HELM deployment
-        run: |
-          gcloud auth login --cred-file=${HOME}/.kube/config.json 
-          gcloud config set project mlcbplatformproject
-          gcloud container clusters get-credentials mlcb-platform-cluster-ap002 --region us-east1 --project mlcbplatformproject 
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
-          helm install mysql-mlcb bitnami/mysql
-          helm list
-      - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
-        if: ${{ env.deploy != 'true'}}
-        name: Google Cloud authentication and undeployment
-        run: |
-          gcloud auth login --cred-file=${HOME}/.kube/config.json 
-          gcloud config set project mlcbplatformproject
-          gcloud container clusters get-credentials mlcb-platform-cluster-ap002 --region us-east1 --project mlcbplatformproject 
-          helm uninstall mysql-mlcb
+          cd what-the-helm
+          
