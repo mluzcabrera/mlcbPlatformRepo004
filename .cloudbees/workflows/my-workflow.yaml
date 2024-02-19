@@ -26,4 +26,6 @@ jobs:
           helm create what-the-helm
           cd what-the-helm
           ls
+          cd ..
+          helm install what-the-helm what-the-helm/
           
