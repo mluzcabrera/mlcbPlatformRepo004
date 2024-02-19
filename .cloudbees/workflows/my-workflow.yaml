@@ -25,4 +25,5 @@ jobs:
           gcloud container clusters get-credentials mlcb-platform-cluster-ap002 --region us-east1 --project mlcbplatformproject 
           helm create what-the-helm
           cd what-the-helm
+          ls
           
