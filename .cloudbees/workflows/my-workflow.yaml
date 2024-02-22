@@ -19,34 +19,19 @@ jobs:
           EOF
       - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
         if: ${{ env.deploy == 'true'}}
-        name: Google Cloud authentication and HELM creation
+        name: Google Cloud authentication and HELM creation, install and port fwd
         run: |
           gcloud auth login --cred-file=${HOME}/.kube/config.json 
           gcloud config set project mlcbplatformproject
           gcloud container clusters get-credentials mlcb-platform-cluster-ap002 --region us-east1 --project mlcbplatformproject 
           helm create what-the-helm
-          cd what-the-helm
-          ls
-          cd ..
           helm install what-the-helm what-the-helm/
           sleep 30
-          export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=what-the-helm,app.kubernetes.io/instance=what-the-helm" -o jsonpath="{.items[0].metadata.name}")
-          export CONTAINER_PORT=$(kubectl get pod --namespace default $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-          echo "Visit http://127.0.0.1:8080 to use your application"
-          kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
-          cat >> ./what-the-helm/templates/configmap.yaml << EOF
-            apiVersion: v1
-            kind: ConfigMap
-            metadata:
-              name: nginx-configmap
-            data:
-              index.html: |
-                <h1>What the Helm!!!</h1>
-          EOF
+          kubectl port-forward svc/what-the-helm 8888:80
           
       - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
         if: ${{ env.deploy != 'true'}}
-        name: Google Cloud authentication and undeployment
+        name: Google Cloud authentication and HELM uninstall
         run: |
           gcloud auth login --cred-file=${HOME}/.kube/config.json 
           gcloud config set project mlcbplatformproject
