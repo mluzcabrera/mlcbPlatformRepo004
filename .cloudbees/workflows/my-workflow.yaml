@@ -8,7 +8,7 @@ on:
 jobs:
   gcloud:
     env:
-      deploy: "true"
+      deploy: "false"
     steps:
       - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
         name: Create credential file from secret
@@ -25,10 +25,7 @@ jobs:
           gcloud config set project mlcbplatformproject
           gcloud container clusters get-credentials mlcb-platform-cluster-ap002 --region us-east1 --project mlcbplatformproject 
           helm create what-the-helm
-          helm install what-the-helm what-the-helm/
-          sleep 30
-          kubectl expose deployment what-the-helm222 --type LoadBalancer --port 80 --target-port 8080
-                    
+          helm install what-the-helm what-the-helm/ --set central.exposure.loadBalancer.enabled=true          
       - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
         if: ${{ env.deploy != 'true'}}
         name: Google Cloud authentication and HELM uninstall
