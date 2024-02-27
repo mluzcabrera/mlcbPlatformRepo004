@@ -27,8 +27,8 @@ jobs:
           helm create what-the-helm
           helm install what-the-helm what-the-helm/
           sleep 30
-          kubectl port-forward svc/what-the-helm 8888:80
-          
+          kubectl expose deployment what-the-helm --type LoadBalancer --port 80 --target-port 8080
+                    
       - uses: docker://kiwigrid/gcloud-kubectl-helm:latest
         if: ${{ env.deploy != 'true'}}
         name: Google Cloud authentication and HELM uninstall
